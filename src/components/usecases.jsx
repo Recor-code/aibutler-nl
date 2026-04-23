@@ -1,3 +1,5 @@
+import React from "react";
+
 // Use cases — "Wat als hij zou kunnen..."
 const UseCases = () => {
   const cases = [
@@ -60,4 +62,4 @@ const UseCases = () => {
   );
 };
 
-Object.assign(window, { UseCases });
+export default UseCases;

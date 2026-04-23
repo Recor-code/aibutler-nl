@@ -1,3 +1,6 @@
+import React from "react";
+import Logo from "./logo";
+
 // Waitlist CTA section
 const Waitlist = () => {
   const [email, setEmail] = React.useState("");
@@ -239,4 +242,4 @@ const Footer = () => (
   </footer>
 );
 
-Object.assign(window, { Waitlist, FAQ, Footer });
+export { Waitlist, FAQ, Footer };

@@ -1,3 +1,6 @@
+import React from "react";
+import { CrestMark } from "./logo";
+
 // HERO — stately butler with typographic headline
 const Hero = () => {
   return (
@@ -147,4 +150,4 @@ const Hero = () => {
   );
 };
 
-Object.assign(window, { Hero });
+export default Hero;

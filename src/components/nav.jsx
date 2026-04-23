@@ -1,3 +1,6 @@
+import React from "react";
+import Logo from "./logo";
+
 // Top navigation
 const Nav = () => {
   const [scrolled, setScrolled] = React.useState(false);
@@ -40,4 +43,4 @@ const Nav = () => {
   );
 };
 
-Object.assign(window, { Nav });
+export default Nav;

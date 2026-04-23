@@ -1,4 +1,7 @@
-// Live butler chat demo using window.claude.complete
+import React from "react";
+
+// Live butler chat demo — calls the Vercel serverless function at /api/chat,
+// which proxies to OpenAI using the OPENAI_API_KEY env var.
 const Demo = () => {
   const [messages, setMessages] = React.useState([
     { role: "butler", text: "Goedemiddag. Ik ben Jeeves, uw digitale butler. Waarmee mag ik u van dienst zijn? U kunt mij bijvoorbeeld vragen uw inbox te triëren, een meeting voor te bereiden, of een samenvatting van uw week te maken." }
@@ -21,27 +24,20 @@ const Demo = () => {
   const send = async (text) => {
     if (!text.trim() || busy) return;
     const userMsg = { role: "user", text: text };
+    const history = [...messages, userMsg];
     setMessages(m => [...m, userMsg]);
     setInput("");
     setBusy(true);
 
-    const history = [...messages, userMsg];
-    const prompt = [
-      "Je bent Jeeves, een digitale butler-AI. Je spreekt Nederlands.",
-      "Karakter: uiterst beleefd, semi-formeel zakelijk, kort en to-the-point.",
-      "Je spreekt de gebruiker aan met 'u'. Af en toe een subtiele butler-formulering ('met alle plezier', 'tot uw dienst', 'zoals u wenst'), maar NIET overdreven.",
-      "Je bent een AUTONOME agent: je kletst niet alleen, je VOERT UIT. Beschrijf concreet welke actie je onderneemt, in welke stappen, en welk resultaat de gebruiker kan verwachten.",
-      "Houd antwoorden kort (max ~90 woorden). Gebruik soms een genummerde lijst van stappen.",
-      "Geen emoji. Geen markdown headings. Maximaal terughoudend met opmaak.",
-      "",
-      "Gespreksgeschiedenis:",
-      ...history.map(m => `${m.role === "butler" ? "Butler" : "Gebruiker"}: ${m.text}`),
-      "Butler:"
-    ].join("\n");
-
     try {
-      const reply = await window.claude.complete(prompt);
-      setMessages(m => [...m, { role: "butler", text: reply.trim() }]);
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: history })
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const { reply } = await res.json();
+      setMessages(m => [...m, { role: "butler", text: (reply || "").trim() || "..." }]);
     } catch (e) {
       setMessages(m => [...m, { role: "butler", text: "Mijn excuses — ik ondervind een kleine technische storing. Probeert u het zo dadelijk opnieuw?" }]);
     }
@@ -211,4 +207,4 @@ const Demo = () => {
   );
 };
 
-Object.assign(window, { Demo });
+export default Demo;

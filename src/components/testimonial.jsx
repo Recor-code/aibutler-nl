@@ -1,3 +1,5 @@
+import React from "react";
+
 // Testimonial + pull-quote
 const Testimonial = () => (
   <section className="section-pad" style={{
@@ -61,4 +63,4 @@ const Testimonial = () => (
   </section>
 );
 
-Object.assign(window, { Testimonial });
+export default Testimonial;

@@ -1,3 +1,5 @@
+import React from "react";
+
 // "Hoe het werkt" — architecture tabs
 const Architecture = () => {
   const pillars = [
@@ -175,4 +177,4 @@ const Architecture = () => {
   );
 };
 
-Object.assign(window, { Architecture });
+export default Architecture;

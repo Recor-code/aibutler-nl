@@ -1,3 +1,5 @@
+import React from "react";
+
 // Comparison table
 const Compare = () => {
   const rows = [
@@ -84,4 +86,4 @@ const Compare = () => {
   );
 };
 
-Object.assign(window, { Compare });
+export default Compare;

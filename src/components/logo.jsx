@@ -1,3 +1,5 @@
+import React from "react";
+
 // AIbutler logo — butler crest mark + wordmark
 const Logo = ({ size = 32, showWord = true, tone = "light" }) => {
   const wordColor = tone === "light" ? "var(--cream-50)" : "var(--navy-1000)";
@@ -54,4 +56,5 @@ const CrestMark = ({ size = 24 }) => (
   </svg>
 );
 
-Object.assign(window, { Logo, CrestMark });
+export { CrestMark };
+export default Logo;

@@ -1,3 +1,5 @@
+import React from "react";
+
 // Features grid + "gebouwd anders" manifesto
 const Features = () => {
   const features = [
@@ -90,4 +92,4 @@ const Features = () => {
   );
 };
 
-Object.assign(window, { Features });
+export default Features;
