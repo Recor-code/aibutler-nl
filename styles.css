@@ -1,0 +1,228 @@
+/* AIbutler.nl — design tokens & base styles */
+:root {
+  /* Core palette: deep marine + warm brass */
+  --navy-1000: #0a1220;       /* near-black navy */
+  --navy-900:  #0e1a2d;
+  --navy-800:  #132440;
+  --navy-700:  #1a3057;
+  --navy-600:  #234073;
+  --navy-500:  #2e5490;
+  --navy-300:  #6f8bb5;
+  --navy-200:  #a8bcd6;
+
+  --brass-900: #5a3a14;
+  --brass-700: #8a5a1e;
+  --brass-500: #c9922d;       /* primary brass */
+  --brass-400: #d9a94a;
+  --brass-300: #e6c172;
+  --brass-200: #f0d79a;
+
+  --cream-50:  #f7f2e8;
+  --cream-100: #efe7d5;
+  --paper:     #fbf7ee;
+
+  --ink-900:   #0b0f17;
+  --ink-700:   #2a3346;
+
+  --accent-bow:#0f1e34;       /* bow-tie navy */
+
+  --line-dark: rgba(230, 193, 114, 0.18);
+  --line-light: rgba(14, 26, 45, 0.12);
+
+  --shadow-lg: 0 40px 80px -30px rgba(0,0,0,0.55), 0 15px 30px -10px rgba(0,0,0,0.35);
+  --shadow-md: 0 20px 40px -20px rgba(0,0,0,0.5);
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+
+  --font-serif: "Fraunces", "Cormorant Garamond", Georgia, serif;
+  --font-sans:  "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono:  "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --container: 1240px;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans);
+  background: var(--navy-1000);
+  color: var(--cream-50);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  line-height: 1.55;
+  overflow-x: hidden;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+/* Typography */
+.h-display {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  color: var(--cream-50);
+}
+.h-display em {
+  font-style: italic;
+  font-variation-settings: "opsz" 144, "SOFT" 100;
+  color: var(--brass-300);
+}
+.h-section {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(36px, 4.6vw, 64px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.h-section em { font-style: italic; color: var(--brass-300); }
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--brass-300);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.eyebrow::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: var(--brass-500);
+}
+
+.lede {
+  font-size: 18px;
+  color: var(--navy-200);
+  max-width: 60ch;
+}
+
+/* Containers */
+.container {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 32px;
+}
+.container-wide {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+section { position: relative; }
+.section-pad { padding: clamp(80px, 10vw, 140px) 0; }
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 24px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: linear-gradient(180deg, var(--brass-400) 0%, var(--brass-500) 100%);
+  color: var(--navy-900);
+  font-weight: 600;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset, 0 10px 30px -10px rgba(201,146,45,0.6);
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset, 0 14px 36px -10px rgba(201,146,45,0.8); }
+.btn-ghost {
+  background: transparent;
+  color: var(--cream-50);
+  border-color: var(--line-dark);
+}
+.btn-ghost:hover { background: rgba(230,193,114,0.06); border-color: var(--brass-500); }
+
+/* Decorative divider */
+.crest-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  color: var(--brass-500);
+  opacity: 0.6;
+  margin: 0 auto;
+}
+.crest-divider::before, .crest-divider::after {
+  content: "";
+  flex: 1;
+  max-width: 200px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--brass-500), transparent);
+}
+
+/* Ornamental background rules */
+.bg-ornate {
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(201,146,45,0.12), transparent 60%),
+    radial-gradient(900px 500px at 10% 110%, rgba(46,84,144,0.22), transparent 60%),
+    var(--navy-1000);
+}
+.bg-cream {
+  background: var(--paper);
+  color: var(--ink-900);
+}
+.bg-cream .lede { color: var(--ink-700); }
+.bg-cream .h-display, .bg-cream .h-section { color: var(--ink-900); }
+.bg-cream .h-display em, .bg-cream .h-section em { color: var(--brass-700); }
+
+/* Subtle grid texture */
+.grid-texture {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(var(--line-dark) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-dark) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+  opacity: 0.4;
+}
+
+/* Chip / badge */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line-dark);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--brass-300);
+  background: rgba(201,146,45,0.06);
+}
+.chip .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--brass-400);
+  box-shadow: 0 0 0 3px rgba(201,146,45,0.2);
+}
+
+/* Reveal on scroll */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity .8s ease, transform .8s ease; }
+.reveal.in { opacity: 1; transform: none; }
+
+/* Scrollbar subtle in chat */
+.thin-scroll::-webkit-scrollbar { width: 6px; }
+.thin-scroll::-webkit-scrollbar-thumb { background: var(--navy-600); border-radius: 3px; }
+.thin-scroll::-webkit-scrollbar-track { background: transparent; }
+
+/* Utility */
+.mono { font-family: var(--font-mono); }
+.serif { font-family: var(--font-serif); }
