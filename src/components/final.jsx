@@ -1,40 +1,31 @@
 import React from "react";
 import Logo from "./logo";
 
-// Waitlist CTA section
+// Waitlist CTA — posts directly to AWeber's addlead.pl endpoint (form id
+// 295803594 / list awlist6952202). After submit AWeber redirects back to
+// /?subscribed=1#wachtlijst where we render the branded success state.
 const Waitlist = () => {
-  const [email, setEmail] = React.useState("");
-  const [busy, setBusy] = React.useState(false);
-  const [submitted, setSubmitted] = React.useState(false);
-  const [already, setAlready] = React.useState(false);
-  const [position, setPosition] = React.useState(null);
-  const [error, setError] = React.useState(null);
-
-  const submit = async (e) => {
-    e.preventDefault();
-    if (busy) return;
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("Vul een geldig e-mailadres in.");
-      return;
-    }
-    setBusy(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/waitlist", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email })
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data?.error || `Er ging iets mis (${res.status}).`);
-      setAlready(!!data?.already);
-      setPosition(Math.floor(1200 + Math.random() * 400));
-      setSubmitted(true);
-    } catch (err) {
-      setError(err?.message || "Er ging iets mis. Probeert u het opnieuw.");
-    }
-    setBusy(false);
+  const [subscribed, setSubscribed] = React.useState(false);
+  const inputStyle = {
+    background: "transparent",
+    border: "1px solid var(--line-dark)",
+    outline: "none",
+    padding: "12px 16px",
+    borderRadius: 8,
+    color: "var(--cream-50)",
+    fontSize: 15,
+    fontFamily: "var(--font-sans)"
   };
+
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("subscribed") === "1") {
+      setSubscribed(true);
+      const el = document.getElementById("wachtlijst");
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, []);
 
   return (
     <section id="wachtlijst" className="section-pad" style={{
@@ -60,35 +51,42 @@ const Waitlist = () => {
           Meld je aan voor de wachtlijst. De eerste 500 pilotdeelnemers krijgen levenslang 40% korting en persoonlijke onboarding door ons team.
         </p>
 
-        {!submitted ? (
-          <form onSubmit={submit} style={{
-            marginTop: 40,
-            display: "flex",
-            gap: 12,
-            padding: 10,
-            background: "rgba(0,0,0,0.3)",
-            border: "1px solid var(--brass-700)",
-            borderRadius: 999,
-            maxWidth: 560,
-            flexWrap: "wrap"
-          }}>
-            <input type="email" required
-              value={email} onChange={e => setEmail(e.target.value)}
-              placeholder="je@bedrijf.nl"
-              disabled={busy}
-              style={{
-                flex: 1, minWidth: 200,
-                background: "transparent",
-                border: "none", outline: "none",
-                padding: "10px 20px",
-                color: "var(--cream-50)",
-                fontSize: 15,
-                fontFamily: "var(--font-sans)"
-              }}
-            />
-            <button type="submit" className="btn btn-primary" disabled={busy} style={{ padding: "12px 22px", opacity: busy ? 0.6 : 1 }}>
-              {busy ? "Eén moment..." : "Plaats mij op de wachtlijst →"}
+        {!subscribed ? (
+          <form
+            method="post"
+            action="https://www.aweber.com/scripts/addlead.pl"
+            acceptCharset="UTF-8"
+            className="waitlist-form"
+            style={{
+              marginTop: 40,
+              padding: 16,
+              background: "rgba(0,0,0,0.3)",
+              border: "1px solid var(--brass-700)",
+              borderRadius: 16,
+              maxWidth: 640,
+              display: "grid",
+              gap: 12,
+              gridTemplateColumns: "1fr 1.3fr auto"
+            }}
+          >
+            <input type="hidden" name="meta_web_form_id" value="295803594" />
+            <input type="hidden" name="meta_split_id" value="" />
+            <input type="hidden" name="listname" value="awlist6952202" />
+            <input type="hidden" name="redirect" value="https://aibutler.nl/?subscribed=1#wachtlijst" />
+            <input type="hidden" name="meta_adtracking" value="aibutler_waitlist" />
+            <input type="hidden" name="meta_message" value="1" />
+            <input type="hidden" name="meta_required" value="name,email" />
+            <input type="hidden" name="meta_tooltip" value="" />
+
+            <input type="text" name="name" required placeholder="Uw naam" autoComplete="name" style={inputStyle} />
+            <input type="email" name="email" required placeholder="je@bedrijf.nl" autoComplete="email" style={inputStyle} />
+            <button type="submit" className="btn btn-primary" style={{ padding: "12px 22px" }}>
+              Plaats mij op de wachtlijst →
             </button>
+
+            <div style={{ display: "none" }}>
+              <img src="https://forms.aweber.com/form/displays.htm?id=TJysHAzMrJws" alt="" />
+            </div>
           </form>
         ) : (
           <div style={{
@@ -97,7 +95,7 @@ const Waitlist = () => {
             background: "linear-gradient(90deg, rgba(201,146,45,0.12), transparent)",
             border: "1px solid var(--brass-500)",
             borderRadius: 12,
-            maxWidth: 560,
+            maxWidth: 640,
             display: "flex", alignItems: "center", gap: 18
           }}>
             <div style={{
@@ -109,29 +107,12 @@ const Waitlist = () => {
             </div>
             <div>
               <div style={{ fontFamily: "var(--font-serif)", fontSize: 20, color: "var(--cream-50)" }}>
-                {already ? "U stond al genoteerd." : "Uitstekend. U staat genoteerd."}
+                Uitstekend. U staat genoteerd.
               </div>
               <div style={{ fontSize: 14, color: "var(--navy-200)", marginTop: 4 }}>
-                {already
-                  ? "Wij houden u per e-mail op de hoogte zodra uw butler in dienst kan treden."
-                  : <>U bent #{position.toLocaleString("nl-NL")} op de wachtlijst. Verwijs een collega en stijg 50 plaatsen.</>}
+                Wij hebben u zojuist een bevestigingsmail gestuurd. Klikt u daarin op de link om uw aanmelding te voltooien, dan houden wij u op de hoogte zodra uw butler in dienst kan treden.
               </div>
             </div>
-          </div>
-        )}
-
-        {error && !submitted && (
-          <div style={{
-            marginTop: 16,
-            padding: "10px 16px",
-            background: "rgba(190, 60, 60, 0.12)",
-            border: "1px solid rgba(190, 60, 60, 0.5)",
-            borderRadius: 8,
-            color: "#f3b4b4",
-            fontSize: 13,
-            maxWidth: 560
-          }}>
-            {error}
           </div>
         )}
 
@@ -141,6 +122,11 @@ const Waitlist = () => {
           <span>● AVG‑conform</span>
         </div>
       </div>
+      <style>{`
+        @media (max-width: 720px) {
+          .waitlist-form { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </section>
   );
 };
