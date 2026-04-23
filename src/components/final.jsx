@@ -4,14 +4,36 @@ import Logo from "./logo";
 // Waitlist CTA section
 const Waitlist = () => {
   const [email, setEmail] = React.useState("");
+  const [busy, setBusy] = React.useState(false);
   const [submitted, setSubmitted] = React.useState(false);
+  const [already, setAlready] = React.useState(false);
   const [position, setPosition] = React.useState(null);
+  const [error, setError] = React.useState(null);
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
-    if (!email.includes("@")) return;
-    setPosition(Math.floor(1200 + Math.random() * 400));
-    setSubmitted(true);
+    if (busy) return;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError("Vul een geldig e-mailadres in.");
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || `Er ging iets mis (${res.status}).`);
+      setAlready(!!data?.already);
+      setPosition(Math.floor(1200 + Math.random() * 400));
+      setSubmitted(true);
+    } catch (err) {
+      setError(err?.message || "Er ging iets mis. Probeert u het opnieuw.");
+    }
+    setBusy(false);
   };
 
   return (
@@ -53,6 +75,7 @@ const Waitlist = () => {
             <input type="email" required
               value={email} onChange={e => setEmail(e.target.value)}
               placeholder="je@bedrijf.nl"
+              disabled={busy}
               style={{
                 flex: 1, minWidth: 200,
                 background: "transparent",
@@ -63,8 +86,8 @@ const Waitlist = () => {
                 fontFamily: "var(--font-sans)"
               }}
             />
-            <button type="submit" className="btn btn-primary" style={{ padding: "12px 22px" }}>
-              Plaats mij op de wachtlijst →
+            <button type="submit" className="btn btn-primary" disabled={busy} style={{ padding: "12px 22px", opacity: busy ? 0.6 : 1 }}>
+              {busy ? "Eén moment..." : "Plaats mij op de wachtlijst →"}
             </button>
           </form>
         ) : (
@@ -86,12 +109,29 @@ const Waitlist = () => {
             </div>
             <div>
               <div style={{ fontFamily: "var(--font-serif)", fontSize: 20, color: "var(--cream-50)" }}>
-                Uitstekend. U staat genoteerd.
+                {already ? "U stond al genoteerd." : "Uitstekend. U staat genoteerd."}
               </div>
               <div style={{ fontSize: 14, color: "var(--navy-200)", marginTop: 4 }}>
-                U bent #{position.toLocaleString("nl-NL")} op de wachtlijst. Verwijs een collega en stijg 50 plaatsen.
+                {already
+                  ? "Wij houden u per e-mail op de hoogte zodra uw butler in dienst kan treden."
+                  : <>U bent #{position.toLocaleString("nl-NL")} op de wachtlijst. Verwijs een collega en stijg 50 plaatsen.</>}
               </div>
             </div>
+          </div>
+        )}
+
+        {error && !submitted && (
+          <div style={{
+            marginTop: 16,
+            padding: "10px 16px",
+            background: "rgba(190, 60, 60, 0.12)",
+            border: "1px solid rgba(190, 60, 60, 0.5)",
+            borderRadius: 8,
+            color: "#f3b4b4",
+            fontSize: 13,
+            maxWidth: 560
+          }}>
+            {error}
           </div>
         )}
 
